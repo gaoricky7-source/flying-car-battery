@@ -1,419 +1,310 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="eVTOL 动力电池的能量密度瓶颈、航空安全冗余与工程妥协分析。">
-  <title>eVTOL 动力电池：能量密度瓶颈与工程妥协</title>
-  <style>
-    :root {
-      --ink: #1a1a1a;
-      --primary: #1a3a5c;
-      --accent: #b45f06;
-      --muted: #606a73;
-      --line: #d7dce1;
-      --soft-gray: #f3f5f7;
-      --soft-orange: #fff8f1;
-    }
-
-    *,
-    *::before,
-    *::after {
-      box-sizing: border-box;
-    }
-
-    html {
-      background: #ffffff;
-    }
-
-    body {
-      margin: 0;
-      color: var(--ink);
-      background: #ffffff;
-      font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
-      font-size: 16px;
-      line-height: 1.75;
-      -webkit-font-smoothing: antialiased;
-      text-rendering: optimizeLegibility;
-    }
-
-    .page {
-      width: 100%;
-      max-width: 820px;
-      margin: 0 auto;
-      padding: 64px 32px 76px;
-    }
-
-    .paper-header {
-      padding-bottom: 28px;
-      border-bottom: 1px solid var(--line);
-    }
-
-    h1 {
-      margin: 0 0 10px;
-      color: var(--primary);
-      font-size: clamp(2rem, 5vw, 2.75rem);
-      font-weight: 750;
-      line-height: 1.28;
-      letter-spacing: -0.025em;
-    }
-
-    .subtitle {
-      max-width: 700px;
-      margin: 0;
-      color: #47515b;
-      font-size: 1.05rem;
-      line-height: 1.65;
-    }
-
-    .meta-bar {
-      margin: 20px 0 0;
-      color: var(--muted);
-      font-size: 0.86rem;
-      letter-spacing: 0.02em;
-    }
-
-    section {
-      margin-top: 42px;
-    }
-
-    h2 {
-      margin: 0 0 18px;
-      padding-left: 12px;
-      border-left: 4px solid var(--primary);
-      color: var(--primary);
-      font-size: 1.42rem;
-      font-weight: 700;
-      line-height: 1.45;
-      letter-spacing: -0.01em;
-    }
-
-    h3 {
-      margin: 24px 0 8px;
-      color: var(--primary);
-      font-size: 1.06rem;
-      font-weight: 700;
-      line-height: 1.5;
-    }
-
-    p {
-      margin: 0 0 1rem;
-      text-indent: 0;
-    }
-
-    ul,
-    ol {
-      margin: 0.35rem 0 1rem;
-      padding-left: 1.45rem;
-    }
-
-    li {
-      margin-bottom: 0.72rem;
-      padding-left: 0.2rem;
-    }
-
-    li:last-child {
-      margin-bottom: 0;
-    }
-
-    strong {
-      color: #111820;
-      font-weight: 700;
-    }
-
-    .summary-list {
-      padding: 20px 24px 20px 42px;
-      border: 1px solid var(--line);
-      background: #fbfcfd;
-    }
-
-    .summary-list li::marker,
-    .references li::marker {
-      color: var(--primary);
-      font-weight: 700;
-    }
-
-    .accent {
-      color: var(--accent);
-      font-weight: 700;
-    }
-
-    .table-wrap {
-      width: 100%;
-      margin: 20px 0;
-      overflow-x: auto;
-      border: 1px solid var(--line);
-    }
-
-    table {
-      width: 100%;
-      min-width: 700px;
-      border-collapse: collapse;
-      font-size: 0.9em;
-      line-height: 1.55;
-    }
-
-    caption {
-      padding: 10px 12px;
-      border-bottom: 1px solid var(--line);
-      background: #ffffff;
-      color: var(--muted);
-      font-size: 0.88em;
-      text-align: left;
-    }
-
-    th,
-    td {
-      padding: 10px 12px;
-      border-right: 1px solid var(--line);
-      border-bottom: 1px solid var(--line);
-      text-align: left;
-      vertical-align: top;
-    }
-
-    th:last-child,
-    td:last-child {
-      border-right: 0;
-    }
-
-    tbody tr:last-child td {
-      border-bottom: 0;
-    }
-
-    thead th {
-      background: var(--soft-gray);
-      color: #263746;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    tbody th {
-      background: #fcfdfe;
-      font-weight: 650;
-    }
-
-    tbody tr:nth-child(even) td,
-    tbody tr:nth-child(even) th {
-      background: #fbfcfd;
-    }
-
-    .note {
-      color: var(--muted);
-      font-size: 0.9rem;
-    }
-
-    .judgments {
-      margin: 0;
-    }
-
-    .judgments p {
-      margin-bottom: 0.85rem;
-    }
-
-    .contrarian {
-      margin-top: 24px;
-      padding: 20px 24px 18px;
-      border: 1px solid rgba(180, 95, 6, 0.45);
-      border-left: 5px solid var(--accent);
-      background: var(--soft-orange);
-    }
-
-    .contrarian h3 {
-      margin-top: 0;
-      color: var(--primary);
-    }
-
-    .contrarian p {
-      margin-bottom: 0;
-    }
-
-    .references {
-      padding-left: 1.6rem;
-      color: #30373e;
-      font-size: 0.92rem;
-    }
-
-    .references li {
-      margin-bottom: 0.9rem;
-      padding-left: 0.3rem;
-    }
-
-    a {
-      color: var(--primary);
-      text-decoration-color: rgba(26, 58, 92, 0.35);
-      text-underline-offset: 3px;
-      overflow-wrap: anywhere;
-    }
-
-    a:hover {
-      color: #102a43;
-      text-decoration-color: currentColor;
-    }
-
-    a:focus-visible {
-      outline: 2px solid var(--primary);
-      outline-offset: 3px;
-      border-radius: 2px;
-    }
-
-    @media (max-width: 640px) {
-      .page {
-        padding: 42px 20px 56px;
-      }
-
-      h1 {
-        font-size: 2rem;
-      }
-
-      .summary-list {
-        padding: 18px 18px 18px 34px;
-      }
-
-      .contrarian {
-        padding: 18px 18px 16px;
-      }
-    }
-
-    @media print {
-      .page {
-        max-width: none;
-        padding: 0;
-      }
-
-      section {
-        break-inside: avoid;
-      }
-
-      a {
-        color: inherit;
-        text-decoration: none;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eVTOL 动力电池：能量密度瓶颈与工程妥协</title>
+    <style>
+        :root {
+            --primary: #0F4C81;
+            --secondary: #1a3a5c;
+            --accent: #D97706;
+            --bg: #f8fafc;
+            --text: #333333;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+            line-height: 1.75;
+            color: var(--text);
+            background-color: var(--bg);
+            margin: 0;
+            padding: 0;
+        }
+        nav {
+            position: sticky;
+            top: 0;
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+            text-align: center;
+            padding: 10px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        nav a {
+            color: var(--secondary);
+            text-decoration: none;
+            margin: 0 15px;
+            font-weight: 600;
+            font-size: 0.95em;
+            transition: color 0.3s;
+        }
+        nav a:hover {
+            color: var(--accent);
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        header h1 {
+            color: var(--primary);
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+        /* 新增的学号姓名样式 */
+        .student-info {
+            font-size: 1.1em;
+            color: #1e293b;
+            font-weight: bold;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+        header p.subtitle {
+            font-size: 1.1em;
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+        .meta-info {
+            display: inline-block;
+            background-color: #e2e8f0;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            color: #475569;
+        }
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card h3 {
+            color: var(--primary);
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            border-bottom: 2px solid var(--accent);
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+        section {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 35px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid var(--border);
+        }
+        section h2 {
+            color: var(--primary);
+            font-size: 1.6em;
+            border-left: 5px solid var(--accent);
+            padding-left: 15px;
+            margin-top: 0;
+            margin-bottom: 25px;
+        }
+        blockquote {
+            background-color: #fffbeb;
+            border-left: 5px solid var(--accent);
+            margin: 25px 0;
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            color: #92400e;
+            font-weight: 500;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.95em;
+        }
+        th, td {
+            padding: 14px 15px;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+        th {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+        tr:hover {
+            background-color: #f1f5f9;
+        }
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            color: #94a3b8;
+            font-size: 0.9em;
+            border-top: 1px solid var(--border);
+            margin-top: 60px;
+        }
+        @media (max-width: 768px) {
+            nav a { margin: 0 8px; font-size: 0.85em; }
+            header h1 { font-size: 1.8em; }
+            section { padding: 20px; }
+            .card-grid { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body>
-  <main class="page">
-    <header class="paper-header">
-      <h1>eVTOL 动力电池：能量密度瓶颈与工程妥协</h1>
-      <p class="subtitle">一份围绕“航空级安全冗余 × 质量预算”展开的分层调研</p>
-      <p class="meta-bar">飞行汽车技术基础 · 技术调研与分析 · 2026年11月</p>
-    </header>
 
-    <section aria-labelledby="executive-summary">
-      <h2 id="executive-summary">执行摘要</h2>
-      <ul class="summary-list">
-        <li><strong>400 Wh/kg 是有用的锚点，但它掩盖了真正的约束结构。</strong> eVTOL 电池的困难不在于“达不到一个数字”，而在于功率密度与能量密度在同一质量预算内互相争夺。</li>
-        <li><strong>当前可交付的 eVTOL 电芯集中在 280–330 Wh/kg。</strong> 这一区间足以支撑示范飞行，但不足以支撑常态化城市空中交通的经济性。</li>
-        <li><strong>固态/半固态路线在电芯级展示了更高数字，但航空级验证数据稀缺。</strong> 从“样品能量密度”到“适航可接受的产品”之间，公开证据密度急剧下降。</li>
-        <li><strong>适航安全冗余会对电池包施加额外的质量与体积惩罚。</strong> 热失控不扩散、双冗余能量储备等要求，使电芯级数字优势在系统级被部分抵消。</li>
-        <li><strong>真正的工程问题不是等待一种新电芯，而是在给定约束下重新分配质量预算。</strong> 循环寿命、热管理与冗余架构可能比追逐电芯数字更接近商业闭环。</li>
-      </ul>
-    </section>
+    <nav>
+        <a href="#summary">摘要</a>
+        <a href="#demand">需求挑战</a>
+        <a href="#material">材料落差</a>
+        <a href="#safety">系统代价</a>
+        <a href="#business">商业考量</a>
+        <a href="#conclusion">结论</a>
+    </nav>
 
-    <section aria-labelledby="demand-side">
-      <h2 id="demand-side">需求侧——eVTOL 向电池要什么？</h2>
-      <p>eVTOL 的飞行剖面不是单一工况的延伸，而是对动力电池提出的双重要求。垂直起飞、悬停与着陆阶段需要瞬时高功率，放电倍率通常要覆盖 <span class="accent">1C 到 5C 以上</span>；进入巡航后，所需功率下降，但持续时间更长，系统又会重新强调高能量密度，以换取航程、有效载荷与备降余量 [1][6]。</p>
-      <p>因此，同一块电池必须在相近的质量预算内同时满足两种截然不同的功率/能量剖面。偏重能量会使高倍率放电能力不足，偏重功率又会增加电芯与热管理系统的质量，这是任何单一电化学体系都难以回避的结构性矛盾 [2][6]。</p>
-      <p>更关键的是，垂直起飞所需动力约为地面行驶的 <span class="accent">10–15 倍</span>。这一数量级差异决定了 eVTOL 电池不能简单沿用汽车动力电池的设计逻辑：汽车电池可以依靠地面冷却、停车充电与较低的持续功率需求进行优化，而航空应用还必须同时约束重量、冗余、故障后果与全寿命可靠性 [1][5]。</p>
-    </section>
+    <div class="container">
+        <header>
+            <h1>eVTOL 动力电池：<br>能量密度瓶颈与工程妥协</h1>
+            <!-- 这里加上了你的信息 -->
+            <p class="student-info">15230815 郜瑞奇</p>
+            <p class="subtitle">一份围绕“航空级安全冗余 × 质量预算”展开的分层调研</p>
+            <div class="meta-info">飞行汽车技术基础 · 作业一 · 2026年11月</div>
+        </header>
 
-    <section aria-labelledby="material-layer">
-      <h2 id="material-layer">材料层——数字繁荣与工程现实</h2>
-      <p>电芯级能量密度的新闻数字与工程可交付值之间存在显著落差。下表将关键论断、对应数字与证据等级放在同一视图中，便于区分“实验室可行”“样品展示”与“可交付产品”三种不同状态。</p>
+        <section id="summary">
+            <h2>1. 执行摘要</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <h3>锚点与真实约束</h3>
+                    <p>400 Wh/kg 是有用的指标，但掩盖了真正的结构：电池必须在同一质量预算内，同时解决功率密度与能量密度的互斥问题。</p>
+                </div>
+                <div class="card">
+                    <h3>工程可交付值</h3>
+                    <p>当前主流 eVTOL 电芯集中在 280-330 Wh/kg。这一区间足以支撑“示范飞行”，但远未达到常态化商业运营的经济门槛。</p>
+                </div>
+                <div class="card">
+                    <h3>验证数据断层</h3>
+                    <p>固态/半固态路线在实验室展示了高数字，但从“样品”到“适航可接受的产品”之间，公开的验证数据密度急剧下降。</p>
+                </div>
+                <div class="card">
+                    <h3>安全惩罚</h3>
+                    <p>适航要求的热失控不扩散与双冗余设计，会带来额外的质量与体积惩罚。电芯级数字优势在系统（Pack）级会被大幅抵消。</p>
+                </div>
+            </div>
+        </section>
 
-      <div class="table-wrap">
-        <table>
-          <caption>表 1　eVTOL 动力电池关键论断与证据等级</caption>
-          <thead>
-            <tr>
-              <th scope="col">论断</th>
-              <th scope="col">数字</th>
-              <th scope="col">证据等级</th>
-              <th scope="col">备注</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th scope="row">当前商用 eVTOL 电芯主流区间</th>
-              <td>280–330 Wh/kg</td>
-              <td>行业访谈/调研</td>
-              <td>可交付、在售 [2][6]</td>
-            </tr>
-            <tr>
-              <th scope="row">商业化“门槛”共识</th>
-              <td>≥400 Wh/kg</td>
-              <td>行业共识/政策讨论</td>
-              <td>针对多座级常态化运营 [1][2]</td>
-            </tr>
-            <tr>
-              <th scope="row">实验室最高突破</th>
-              <td>~700 Wh/kg</td>
-              <td>实验室级</td>
-              <td>未产业化 [2]</td>
-            </tr>
-            <tr>
-              <th scope="row">半固态/固态航空样品</th>
-              <td>400–420 Wh/kg</td>
-              <td>样品/A 样</td>
-              <td>适航验证进度不一 [3]</td>
-            </tr>
-            <tr>
-              <th scope="row">宁德时代凝聚态（电芯级）</th>
-              <td>500 Wh/kg</td>
-              <td>技术发布 + 首飞验证</td>
-              <td>航空版本 350 Wh/kg 已通过热失控测试 [4]</td>
-            </tr>
-            <tr>
-              <th scope="row">Joby 定制 NMC 电芯</th>
-              <td>~310 Wh/kg（电芯级）</td>
-              <td>飞行小时积累</td>
-              <td>配合定制 pack 设计 [4][6]</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+        <section id="demand">
+            <h2>2. 需求侧：eVTOL 向电池要什么？</h2>
+            <p>eVTOL（电动垂直起降飞行器）对动力电池的要求，与传统的新能源汽车有着本质区别。这种区别不仅在于工作环境，更在于对功率和能量的“极端矛盾”需求。</p>
+            <p>在起飞和着陆阶段，飞行器需要克服重力，电机必须输出极大的瞬时功率，放电倍率通常需要覆盖 <strong>1C 到 5C 以上</strong>。而在巡航阶段，电池需要提供持续且稳定的能量输出，以延长航程。同一块电池，既要在几秒钟内爆发巨大能量，又要在几十分钟内精打细算，这是目前单一电化学体系面临的巨大挑战。</p>
+            <blockquote>
+                核心矛盾：高功率电芯往往需要牺牲能量密度，而高能量密度电芯难以承受高倍率放电。这个“不可能三角”无法通过单纯的材料升级消除，只能在系统层面进行妥协。
+            </blockquote>
+        </section>
 
-      <p>从“样品”到“适航可接受的产品”，公开数据的密度急剧下降，这是判断技术成熟度时必须计入的信号。较高的电芯数字可以证明材料路线具有潜力，却不足以直接推导出系统级性能；真正的评估还需观察循环寿命、热安全、批次一致性、故障率与适航验证进度 [2][3][5]。</p>
-    </section>
+        <section id="material">
+            <h2>3. 材料层：数字繁荣与工程现实</h2>
+            <p>媒体上充斥着电池能量密度突破的新闻，但在工程领域，我们必须将“实验室数据”与“工程可交付数据”严格区分。下表展示了当前 eVTOL 电池领域的数字分层：</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>论断</th>
+                        <th>数字指标</th>
+                        <th>证据等级</th>
+                        <th>备注</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>当前商用 eVTOL 电芯主流区间</td>
+                        <td>280–330 Wh/kg</td>
+                        <td>行业访谈/调研</td>
+                        <td>可交付、在售</td>
+                    </tr>
+                    <tr>
+                        <td>商业化“门槛”共识</td>
+                        <td>≥400 Wh/kg</td>
+                        <td>行业共识/政策讨论</td>
+                        <td>针对多座级常态化运营</td>
+                    </tr>
+                    <tr>
+                        <td>实验室最高突破</td>
+                        <td>~700 Wh/kg</td>
+                        <td>实验室级</td>
+                        <td>未产业化</td>
+                    </tr>
+                    <tr>
+                        <td>半固态/固态航空样品</td>
+                        <td>400–420 Wh/kg</td>
+                        <td>样品/A 样</td>
+                        <td>适航验证进度不一</td>
+                    </tr>
+                    <tr>
+                        <td>宁德时代凝聚态（电芯级）</td>
+                        <td>500 Wh/kg</td>
+                        <td>技术发布+首飞验证</td>
+                        <td>航空版本 350 Wh/kg 已通过热失控测试</td>
+                    </tr>
+                    <tr>
+                        <td>Joby 定制 NMC 电芯</td>
+                        <td>~310 Wh/kg</td>
+                        <td>飞行小时积累</td>
+                        <td>配合定制 pack 设计，追求综合平衡</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>从表格可以看出，真正能够装在飞机上飞起来，并满足安全冗余的，通常是表格下半部分的数据。从“样品”到“适航可接受的产品”，公开数据的密度急剧下降，这是判断技术成熟度时必须计入的信号。</p>
+        </section>
 
-    <section aria-labelledby="safety-layer">
-      <h2 id="safety-layer">安全层——适航冗余如何吃掉能量密度收益</h2>
-      <p>EASA SC-VTOL 与 FAA 特殊条件对电池系统的核心要求并不是“能量密度高”，而是“失效可控”。监管关注的重点包括热失控是否会被限制在局部、单点失效是否可能引发连锁反应，以及动力系统在故障后是否仍保有必要能量与控制能力 [5]。</p>
-      <p>这些原则会直接转化为电池包层面的工程措施：电芯之间设置隔热与阻燃结构，模组配置定向泄压通道，动力与储能架构保留双冗余能量储备（baulking energy），并对连接件、壳体与承载结构进行加强。热失控不扩散、单点失效不导致灾难性后果，都意味着 pack 需要额外质量或体积，因此电芯级的能量密度优势在系统级会被部分抵消 [4][5]。</p>
-      <p>宁德时代 <span class="accent">350 Wh/kg</span> 航空版本通过“相邻两颗电芯同时热失控不扩散”测试，提供了这一判断的具体例证。该指标说明：安全验证的通过门槛与电芯能量密度是两条独立的评价线，前者无法由后者自动推出；在极端热事件下保持相邻电芯状态可控，本身就是结构、材料与热管理共同参与的工程结果 [4]。</p>
-    </section>
+        <section id="safety">
+            <h2>4. 安全层：适航冗余如何吃掉能量密度收益</h2>
+            <p>EASA SC-VTOL 和 FAA 特殊条件对电池系统的核心要求，并不是单纯地追求“能量密度高”，而是要求<strong>“失效可控”</strong>。</p>
+            <p>当单个电芯发生热失控时，系统必须具备阻止热量向相邻电芯蔓延的能力（热失控不扩散）。这意味着电池包内部需要增加大量的气凝胶隔热垫、阻燃材料、定向泄压阀和结构加强件。此外，为了应对紧急迫降，电池系统必须保留足够的“保底能量（Baulking Energy）”，且 BMS 必须采用双冗余架构。</p>
+            <p>这些为了满足航空安全而增加的物理结构和管理系统，不仅增加了电池包的整体重量，也增加了体积。每一项安全措施，都在无形中“吃掉”了电芯级带来的能量密度优势。</p>
+        </section>
 
-    <section aria-labelledby="commercial-layer">
-      <h2 id="commercial-layer">商业层——循环寿命是隐藏的质量惩罚</h2>
-      <p>eVTOL 电池在高倍率充放工况下的循环寿命通常短于车用场景。相关研究指出，一块在电动汽车上可支撑百万英里级别的电池，在 eVTOL 使用剖面下可能仅能维持约 <span class="accent">两年</span>。高频次起降、较高倍率放电与为缩短周转时间而采用的快充策略，会共同加速容量衰减与内阻增长 [6]。</p>
-      <p>这意味着电池更换成本必须进入航线单位经济性，而不能只比较初始采购价格。更高的标称能量密度若伴随更短寿命、更复杂的冷却系统或更昂贵的更换周期，其全寿命周期有效能量成本未必更低。因此，<span class="accent">“能量密度最高”不等于“全寿命周期有效能量成本最低”</span>，商业可行性取决于每次有效飞行的总成本，而不是电芯规格表上的单一峰值 [1][6]。</p>
-    </section>
+        <section id="business">
+            <h2>5. 商业层：循环寿命是隐藏的质量惩罚</h2>
+            <p>除了性能和安全性，电池的循环寿命直接决定了飞行汽车商业运营的生死。eVTOL 高频次、大倍率的充放电工况，对电池的损耗远大于地面电动汽车。</p>
+            <p>有研究指出，一块在电动汽车上可支撑百万公里级别的电池，在 eVTOL 极端的使用剖面下，可能仅能维持约两年。这意味着，电池更换成本必须被算进航线单位经济性中。如果为了追求高能量密度，而使用了循环寿命极短的电芯，其全寿命周期内的“有效能量成本”可能反而更高，导致商业模式不成立。</p>
+        </section>
 
-    <section aria-labelledby="conclusion">
-      <h2 id="conclusion">结论与判断</h2>
-      <div class="judgments">
-        <p><strong>电芯层：</strong>高能量密度路线活跃，但工程可交付值集中在 <span class="accent">280–330 Wh/kg</span>。</p>
-        <p><strong>系统层：</strong>适航安全冗余对质量预算的消耗，使电芯级数字优势在 pack 级被部分抵消。</p>
-        <p><strong>商业层：</strong>循环寿命与高倍率工况的叠加，使“能量密度最高”不等于“运营成本最低”。</p>
-      </div>
+        <section id="conclusion">
+            <h2>6. 结论与判断</h2>
+            <p>综合上述分析，我们可以得出以下三层判断：</p>
+            <ul>
+                <li><strong>电芯层：</strong>高能量密度路线在实验室非常活跃，但工程可交付值仍集中在 280–330 Wh/kg 区间。</li>
+                <li><strong>系统层：</strong>适航安全冗余对质量预算的消耗，使电芯级数字优势在系统级被部分抵消。</li>
+                <li><strong>商业层：</strong>循环寿命与高倍率工况的叠加，使“能量密度最高”不等于“运营成本最低”。</li>
+            </ul>
+            <blockquote>
+                非共识判断：当前阶段的真正瓶颈，可能不在于等待“更高能量密度的电芯”，而在于电池包层面的热管理与冗余架构。谁能在给定的安全约束下，把系统级质量效率做到最优，谁就比单纯追逐电芯数字的玩家更接近商业闭环。
+            </blockquote>
+        </section>
 
-      <aside class="contrarian" aria-labelledby="non-consensus">
-        <h3 id="non-consensus">非共识判断</h3>
-        <p>当前阶段的真正瓶颈可能不在“更高能量密度的电芯”，而在电池包层面的热管理与冗余架构。谁能在给定的安全约束下把系统级质量效率做到最优，谁就比单纯追逐电芯数字的玩家更接近商业闭环。</p>
-      </aside>
-    </section>
+        <footer>
+            <p>© 2026 飞行汽车技术基础课程作业</p>
+            <p>参考文献：中国能源网、电池中国网、EASA SC-VTOL 适航标准及相关行业调研数据。</p>
+        </footer>
+    </div>
 
-    <section aria-labelledby="references">
-      <h2 id="references">参考文献</h2>
-      <ol class="references">
-        <li>中国能源网，《<a href="https://www.cnenergynews.cn/article/4SmLd2TUwpC" target="_blank" rel="noopener noreferrer">低空经济、AI算力、绿色船舶：六个产业场景如何重新定义储能需求</a>》，2026-08-13。</li>
-        <li>电池中国网，《<a href="https://www.cbea.com" target="_blank" rel="noopener noreferrer">跨越400Wh/kg门槛 航空电池开启空中“动力革命”</a>》，2025-10-17。</li>
-        <li>李良彬/赣锋锂业，《<a href="http://cbcu.com.cn/zbqd/2026030945370.html" target="_blank" rel="noopener noreferrer">聚焦低空经济痛点 建言动力破局之路</a>》，2026-03-09。</li>
-        <li>飞行邦/网易，《<a href="https://www.163.com/dy/article/LBJOQT1Q05503O4L_pdya11y.html" target="_blank" rel="noopener noreferrer">宁德时代航空电池的“适航账本”</a>》，2026-11。</li>
-        <li>Embention，《<a href="https://www.embention.com/es/whitepaper/road-to-evtol-certification-regulatory-challenges-of-advanced-air-mobility/" target="_blank" rel="noopener noreferrer">Road to eVTOL Certification: Regulatory Challenges of Advanced Air Mobility</a>》，2026-02-26。</li>
-        <li>eVTOL.Travel，《<a href="https://evtol.travel" target="_blank" rel="noopener noreferrer">eVTOL Battery Technology: Range, Charging &amp; Future Breakthroughs</a>》，2026-02-16。</li>
-      </ol>
-    </section>
-  </main>
 </body>
 </html>
